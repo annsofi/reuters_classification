@@ -13,6 +13,7 @@ import java.util.Map;
 
 import weka.core.Attribute;
 import weka.core.Instances;
+import weka.core.tokenizers.NGramTokenizer;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
@@ -208,11 +209,18 @@ public class DatasetHelper {
 
 	public StringToWordVector createWordVectorFilter(Instances data){
 		try {
+			// Set the tokenizer
+			NGramTokenizer tokenizer = new NGramTokenizer();
+			tokenizer.setNGramMinSize(1);
+			tokenizer.setNGramMaxSize(2);
+			tokenizer.setDelimiters("\\W");
+			
 			StringToWordVector filter = new StringToWordVector();
-			filter.setLowerCaseTokens(true);
-			filter.setWordsToKeep(wordsToKeep);
-			filter.setIDFTransform(true);
 			filter.setInputFormat(data);
+			filter.setTokenizer(tokenizer);
+			filter.setWordsToKeep(wordsToKeep);
+			//filter.setDoNotOperateOnPerClassBasis(true);
+			filter.setLowerCaseTokens(true);
 			return filter;
 		} catch (IOException e) {
 			System.err.println("[DatasetHelper.createWordVectorFilter]: " + e.getMessage());

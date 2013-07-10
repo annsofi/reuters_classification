@@ -19,17 +19,15 @@ public class Main {
 					"veg-oil", "soybean", "livestock"));
 
 	public static void main(String[] args) throws Exception {
-		int fsMethod = Integer.parseInt(args[0]);
-		String clsMethod = args[1];
-		int wordsToKeep = Integer.parseInt(args[2]);
-		int numToSelect = Integer.parseInt(args[3]);
+	
+		int fsMethod = 3; // 0 no feature selection 3 - gain ration ranker search
+		String clsMethod = "NB";
+		int wordsToKeep = 4000;
+		int numToSelect = 200; // with fsMethod 3
+
+		
 		String outFilename = fsMethod+"-"+clsMethod+"-"+wordsToKeep+"-"+numToSelect+".txt";
 		Utility.filename = outFilename;
-//		int fsMethod = 0;
-//		String clsMethod = "NB";
-//		int wordsToKeep = 5000;
-//		int numToSelect = 400;
-//		Utility.filename = "test.txt";
 		Utility.ensureFileExists(outFilename);
 
 		System.out.println("fsMethod " + fsMethod 
