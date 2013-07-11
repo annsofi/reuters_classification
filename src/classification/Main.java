@@ -22,23 +22,31 @@ public class Main {
 	
 		int fsMethod = 3; // 0 no feature selection 3 - gain ration ranker search
 		String clsMethod = "NB";
-		int wordsToKeep = 4000;
-		int numToSelect = 200; // with fsMethod 3
-
+		int wordsToKeep = 10000;
+		int numToSelect = 50; // with fsMethod 3
+		int minTermFreq = 1;
+		int nGrams = 1; // set to 1 to not use nGrams
+		boolean useStopList = false;
+		boolean useStemmer = true;
 		
-		String outFilename = fsMethod+"-"+clsMethod+"-"+wordsToKeep+"-"+numToSelect+".txt";
+		String outFilename = fsMethod+"-"+clsMethod+"-"+wordsToKeep+"-"+numToSelect+"-" 
+							+ minTermFreq+"-stopList-"+useStopList +"-"+nGrams+"Grams"+ "-stemmer-"+ useStemmer +".txt";
 		Utility.filename = outFilename;
 		Utility.ensureFileExists(outFilename);
 
 		System.out.println("fsMethod " + fsMethod 
-				+ "\nclsMethod " 
-				+ clsMethod + "\nwordsToKeep " 
-				+ wordsToKeep + "\nnumToSelect " 
-				+ numToSelect + "\noutfile " + outFilename);
+				+ "\nclsMethod " + clsMethod 
+				+ "\nwordsToKeep " 	+ wordsToKeep 
+				+ "\nnumToSelect " + numToSelect 
+				+ "\nminTermFreq " + minTermFreq
+				+ "\nuseStopList "+ useStopList
+				+ "\nnGarms "+ nGrams
+				+ "\nuseStemmer "+ useStemmer
+				+ "\noutfile " + outFilename);
 
 		long startTime = System.currentTimeMillis();
 
-		DatasetHelper dh = new DatasetHelper(wordsToKeep);
+		DatasetHelper dh = new DatasetHelper(wordsToKeep, minTermFreq, useStopList, nGrams, useStemmer);
 
 		// Configure StringToWordVector using all words from the training set
 		Instances originalTrainRaw = dh.loadData("alltrain_noclass.arff");

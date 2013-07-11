@@ -17,7 +17,7 @@ import weka.core.Instances;
 public class Test {
 
 	public static void main(String[] args) throws Exception{
-		DatasetHelper dh = new DatasetHelper(5000);
+		DatasetHelper dh = new DatasetHelper(5000, 1, false, 1, false);
 		Instances data = dh.loadData("for_testing.arff");
 		data.setClassIndex(4);
 		FeatureSelection fs = new FeatureSelection(2, 500);

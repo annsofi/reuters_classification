@@ -13,6 +13,9 @@ import java.util.Map;
 
 import weka.core.Attribute;
 import weka.core.Instances;
+import weka.core.stemmers.SnowballStemmer;
+//import weka.core.tokenizers.AlphabeticTokenizer;
+
 import weka.core.tokenizers.NGramTokenizer;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
@@ -20,11 +23,20 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 public class DatasetHelper {
 	
 	private int wordsToKeep = 5000;
+	private int minTermFreq = 1;
+	private boolean useStopList = false;
+	private int nGrams = 1;
+	private  boolean useStemmer = false;
 	private List<String> binaryValues = new ArrayList<String>(
 			Arrays.asList("1.0", "0.0"));
 	
-	public DatasetHelper(int wordsToKeep){
+
+	public DatasetHelper(int wordsToKeep, int minTermFreq, boolean useStopList, int nGrams, boolean useStemmer) {
 		this.wordsToKeep = wordsToKeep;
+		this.minTermFreq = minTermFreq;
+		this.useStopList = useStopList;
+		this.nGrams = nGrams;
+		this.useStemmer = useStemmer;
 	}
 	/**
 	 * Load a dataset from a specified file.
@@ -211,16 +223,30 @@ public class DatasetHelper {
 		try {
 			// Set the tokenizer
 			NGramTokenizer tokenizer = new NGramTokenizer();
-			tokenizer.setNGramMinSize(1);
-			tokenizer.setNGramMaxSize(2);
+			tokenizer.setNGramMaxSize(nGrams);
 			tokenizer.setDelimiters("\\W");
+	
+
+		    /* Apply Filters */
+		    StringToWordVector filter = new StringToWordVector();
+		    //normalize or not
+		    //filter.setNormalizeDocLength(new SelectedTag(StringToWordVector.FILTER_NORMALIZE_ALL, StringToWordVector.TAGS_FILTER));
+		    filter.setLowerCaseTokens(true);
+		    filter.setUseStoplist(useStopList);
+		    //filter.setTokenizer(new AlphabeticTokenizer());
+		    
+
+		   
+			if (useStemmer)
+		    {
+		    	SnowballStemmer stemmer = new SnowballStemmer();
+		    	filter.setStemmer(stemmer); // constant set to "english"
+		    }
+		    filter.setMinTermFreq(minTermFreq);
+		    filter.setWordsToKeep(wordsToKeep);
+		    filter.setInputFormat(data);
+		    filter.setTokenizer(tokenizer);
 			
-			StringToWordVector filter = new StringToWordVector();
-			filter.setInputFormat(data);
-			filter.setTokenizer(tokenizer);
-			filter.setWordsToKeep(wordsToKeep);
-			//filter.setDoNotOperateOnPerClassBasis(true);
-			filter.setLowerCaseTokens(true);
 			return filter;
 		} catch (IOException e) {
 			System.err.println("[DatasetHelper.createWordVectorFilter]: " + e.getMessage());
