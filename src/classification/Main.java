@@ -23,14 +23,15 @@ public class Main {
 		int fsMethod = 3; // 0 no feature selection 3 - gain ration ranker search
 		String clsMethod = "NB";
 		int wordsToKeep = 10000;
-		int numToSelect = 50; // with fsMethod 3
+		int numToSelect = 100; // with fsMethod 3
 		int minTermFreq = 1;
 		int nGrams = 1; // set to 1 to not use nGrams
 		boolean useStopList = false;
-		boolean useStemmer = true;
+		boolean useStemmer = false;
+		boolean normalizeDocLength = false;
 		
 		String outFilename = fsMethod+"-"+clsMethod+"-"+wordsToKeep+"-"+numToSelect+"-" 
-							+ minTermFreq+"-stopList-"+useStopList +"-"+nGrams+"Grams"+ "-stemmer-"+ useStemmer +".txt";
+							+ minTermFreq+"-stopList-"+useStopList +"-"+nGrams+"Grams"+ "-stemmer-"+ useStemmer +"-normalizeDocLength-" + normalizeDocLength +".txt";
 		Utility.filename = outFilename;
 		Utility.ensureFileExists(outFilename);
 
@@ -42,11 +43,12 @@ public class Main {
 				+ "\nuseStopList "+ useStopList
 				+ "\nnGarms "+ nGrams
 				+ "\nuseStemmer "+ useStemmer
+				+ "\nnormalizeDocLength "+ normalizeDocLength
 				+ "\noutfile " + outFilename);
 
 		long startTime = System.currentTimeMillis();
 
-		DatasetHelper dh = new DatasetHelper(wordsToKeep, minTermFreq, useStopList, nGrams, useStemmer);
+		DatasetHelper dh = new DatasetHelper(wordsToKeep, minTermFreq, useStopList, nGrams, useStemmer, normalizeDocLength);
 
 		// Configure StringToWordVector using all words from the training set
 		Instances originalTrainRaw = dh.loadData("alltrain_noclass.arff");
