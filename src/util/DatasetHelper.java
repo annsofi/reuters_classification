@@ -13,7 +13,6 @@ import java.util.Map;
 
 import weka.core.Attribute;
 import weka.core.Instances;
-import weka.core.SelectedTag;
 import weka.core.stemmers.SnowballStemmer;
 //import weka.core.tokenizers.AlphabeticTokenizer;
 
@@ -28,18 +27,16 @@ public class DatasetHelper {
 	private boolean useStopList = false;
 	private int nGrams = 1;
 	private  boolean useStemmer = false;
-	private boolean normalizeDocLength = false;
 	private List<String> binaryValues = new ArrayList<String>(
 			Arrays.asList("1.0", "0.0"));
 	
 
-	public DatasetHelper(int wordsToKeep, int minTermFreq, boolean useStopList, int nGrams, boolean useStemmer, boolean normalizeDocLength) {
+	public DatasetHelper(int wordsToKeep, int minTermFreq, boolean useStopList, int nGrams, boolean useStemmer) {
 		this.wordsToKeep = wordsToKeep;
 		this.minTermFreq = minTermFreq;
 		this.useStopList = useStopList;
 		this.nGrams = nGrams;
 		this.useStemmer = useStemmer;
-		this.normalizeDocLength = normalizeDocLength;
 	}
 	/**
 	 * Load a dataset from a specified file.
@@ -226,30 +223,28 @@ public class DatasetHelper {
 		try {
 			// Set the tokenizer
 			NGramTokenizer tokenizer = new NGramTokenizer();
-			tokenizer.setNGramMinSize(1);
 			tokenizer.setNGramMaxSize(nGrams);
 			tokenizer.setDelimiters("\\W");
 	
 
 		    /* Apply Filters */
 		    StringToWordVector filter = new StringToWordVector();
-		    filter.setInputFormat(data);
 		    //normalize or not
-		    if (normalizeDocLength)
-		    	filter.setNormalizeDocLength(new SelectedTag(StringToWordVector.FILTER_NORMALIZE_ALL, StringToWordVector.TAGS_FILTER));
-		    
+		    //filter.setNormalizeDocLength(new SelectedTag(StringToWordVector.FILTER_NORMALIZE_ALL, StringToWordVector.TAGS_FILTER));
 		    filter.setLowerCaseTokens(true);
 		    filter.setUseStoplist(useStopList);
 		    //filter.setTokenizer(new AlphabeticTokenizer());
-		    		   
+		    
+
+		   
 			if (useStemmer)
 		    {
 		    	SnowballStemmer stemmer = new SnowballStemmer();
 		    	filter.setStemmer(stemmer); // constant set to "english"
 		    }
-			
 		    filter.setMinTermFreq(minTermFreq);
 		    filter.setWordsToKeep(wordsToKeep);
+		    filter.setInputFormat(data);
 		    filter.setTokenizer(tokenizer);
 			
 			return filter;
